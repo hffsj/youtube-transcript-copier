@@ -13,35 +13,18 @@ def get_transcript(video_id):
     transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ja', 'en'])
     return " ".join([entry['text'] for entry in transcript])
 
+# セッション状態を使って入力内容を管理
+if "url_input" not in st.session_state:
+    st.session_state.url_input = ""
+
 st.title("📋 YouTube文字起こしコピーツール")
 st.write("YouTubeのURLを入力すると、文字起こしが表示されます。末尾に『上記の文章を要約してください。』が付きます。")
 
-url = st.text_input("🔗 YouTubeのURLを入力してください")
+# 入力欄とクリアボタンを横並びに表示
+col1, col2 = st.columns([4, 1])
+with col1:
+    url = st.text_input("🔗 YouTubeのURLを入力してください", value=st.session_state.url_input, key="url_input")
 
-if st.button("文字起こしを取得する") and url:
-    video_id = extract_video_id(url)
-    if video_id:
-        try:
-            transcript = get_transcript(video_id)
-            final_text = transcript + "\n\n上記の文章を要約してください。"
-            st.success("以下の文字をそのままコピーして、ChatGPTに貼ってください👇")
-            st.code(final_text, language='text')
-
-            # 自動でテキストエリアを選択するスクリプト
-            components.html(
-                """
-                <script>
-                const textarea = window.parent.document.querySelector('textarea');
-                if (textarea) {
-                    textarea.focus();
-                    textarea.select();
-                }
-                </script>
-                """,
-                height=0,
-            )
-
-        except Exception as e:
-            st.error(f"文字起こしの取得中にエラーが発生しました：{e}")
-    else:
-        st.error("正しいYouTubeのURLを入力してください")
+with col2:
+    if st.button("クリア"):
+        st.session_state.url_
