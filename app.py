@@ -20,23 +20,17 @@ if "url_input" not in st.session_state:
 st.title("📋 YouTube文字起こしコピーツール")
 st.write("YouTubeのURLを入力すると、文字起こしが表示されます。末尾に『上記の文章を要約してください。』が付きます。")
 
-# 入力欄
-url = st.text_input("🔗 YouTubeのURLを入力してください", value=st.session_state.url_input, key="url_input")
-
-# ボタンを横並びで配置
-col1, col2 = st.columns([2, 1])
+# 入力欄 + クリアボタン（横並び）
+col1, col2 = st.columns([5, 1])
 with col1:
-    run = st.button("文字起こしを取得する")
+    st.text_input("🔗 YouTubeのURLを入力してください", value=st.session_state.url_input, key="url_input")
 with col2:
-    clear = st.button("クリア")
+    if st.button("✖️"):
+        st.session_state.url_input = ""
+        st.experimental_rerun()
 
-# クリアが押されたら入力をリセットして再読み込み
-if clear:
-    st.session_state.url_input = ""
-    st.experimental_rerun()
-
-# 文字起こし取得処理
-if run and st.session_state.url_input:
+# 実行ボタン（下に配置）
+if st.button("文字起こしを取得する") and st.session_state.url_input:
     video_id = extract_video_id(st.session_state.url_input)
     if video_id:
         try:
