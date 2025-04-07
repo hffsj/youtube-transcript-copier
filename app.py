@@ -14,7 +14,7 @@ def get_transcript(video_id):
     return " ".join([entry['text'] for entry in transcript])
 
 st.title("📋 YouTube文字起こしコピーツール")
-st.write("YouTubeのURLを入力すると、文字起こしが表示されます。最初に『要約して』が付きます。")
+st.write("YouTubeのURLを入力すると、文字起こしが表示されます。末尾に『上記の文章を要約してください。』が付きます。")
 
 url = st.text_input("🔗 YouTubeのURLを入力してください")
 
@@ -23,11 +23,11 @@ if st.button("文字起こしを取得する") and url:
     if video_id:
         try:
             transcript = get_transcript(video_id)
-            final_text = "要約して\n\n以下の文章を要約して：\n\n" + transcript
+            final_text = transcript + "\n\n上記の文章を要約してください。"
             st.success("以下の文字をそのままコピーして、ChatGPTに貼ってください👇")
             st.code(final_text, language='text')
 
-            # 自動でテキストエリアを選択するスクリプト（安全な方法）
+            # 自動でテキストエリアを選択するスクリプト
             components.html(
                 """
                 <script>
