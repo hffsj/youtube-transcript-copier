@@ -13,7 +13,7 @@ def get_transcript(video_id):
     return " ".join([entry['text'] for entry in transcript])
 
 st.title("📋 YouTube文字起こしコピーツール")
-st.write("YouTubeのURLを入力すると、文字起こしが表示されます。末尾に「要約して」が付きます。")
+st.write("YouTubeのURLを入力すると、文字起こしが表示されます。最初に『要約して』が付きます。")
 
 url = st.text_input("🔗 YouTubeのURLを入力してください")
 
@@ -22,9 +22,9 @@ if st.button("文字起こしを取得する") and url:
     if video_id:
         try:
             transcript = get_transcript(video_id)
-            transcript += "\n\n要約して"
+            final_text = "要約して\n\n以下の文章を要約して：\n\n" + transcript
             st.success("以下の文字をそのままコピーして、ChatGPTに貼ってください👇")
-            st.code(transcript, language='text')
+            st.code(final_text, language='text')
             st.markdown("""
                 <script>
                 const el = window.parent.document.querySelectorAll('textarea')[0];
@@ -32,8 +32,4 @@ if st.button("文字起こしを取得する") and url:
                     el.select();
                 }
                 </script>
-            """, unsafe_allow_html=True)
-        except Exception as e:
-            st.error(f"文字起こしの取得中にエラーが発生しました：{e}")
-    else:
-        st.error("正しいYouTubeのURLを入力してください")
+            """, unsafe_allow_html=True
