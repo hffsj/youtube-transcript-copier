@@ -1,6 +1,7 @@
 import streamlit as st
 from youtube_transcript_api import YouTubeTranscriptApi
 import re
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="YouTube文字起こしコピーツール", layout="centered")
 
@@ -25,11 +26,22 @@ if st.button("文字起こしを取得する") and url:
             final_text = "要約して\n\n以下の文章を要約して：\n\n" + transcript
             st.success("以下の文字をそのままコピーして、ChatGPTに貼ってください👇")
             st.code(final_text, language='text')
-            st.markdown("""
+
+            # 自動でテキストエリアを選択するスクリプト（安全な方法）
+            components.html(
+                """
                 <script>
-                const el = window.parent.document.querySelectorAll('textarea')[0];
-                if (el) {
-                    el.select();
+                const textarea = window.parent.document.querySelector('textarea');
+                if (textarea) {
+                    textarea.focus();
+                    textarea.select();
                 }
                 </script>
-            """, unsafe_allow_html=True
+                """,
+                height=0,
+            )
+
+        except Exception as e:
+            st.error(f"文字起こしの取得中にエラーが発生しました：{e}")
+    else:
+        st.error("正しいYouTubeのURLを入力してください")
